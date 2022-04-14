@@ -1,0 +1,30 @@
+services:
+  tbot:
+    build: .
+    image : dragsnake/cmasf:cmasf_bot1
+    networks:
+      - front-tier
+      - back-tier
+    environment:
+      REDIS_HOST : "cmasf-redis"
+      BTOK : ""
+    container_name: cmasf_bot1
+    restart: unless-stopped
+    depends_on:
+      cmasf-redis:
+        condition: service_started
+  cmasf-redis:
+    image: "redis"
+    container_name: cmasf-redis
+    networks:
+      - back-tier
+    restart: unless-stopped
+
+networks:
+  back-tier:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "192.168.238.0/24"
+  front-tier:
+    driver: bridge
